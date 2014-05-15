@@ -1,6 +1,5 @@
 # Add more folders to ship with the application, here
-folder_01.source = qml/Mines
-folder_01.target = qml
+folder_01.source = qml
 DEPLOYMENTFOLDERS = folder_01
 
 # Additional import path used to resolve QML modules in Creator's code model
@@ -21,9 +20,8 @@ include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 OTHER_FILES += \
-    qml/Mines/MainView.qml \
-    qml/Mines/Cell.qml \
-    qml/Mines/GameProxy.qml
+    qml/MainView.qml \
+    qml/Cell.qml
 
 HEADERS += \
     mainwidget.h \

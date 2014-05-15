@@ -133,7 +133,6 @@ QVariant CellsModel::data(const QModelIndex &index, int role) const
         if (!index.isValid())
             return QVariant();
 
-    qDebug("Role: %d, %d", index.row(), index.column());
     if (role == DataRole)
         return qVariantFromValue(m_listCells.at(index.row()));
 }

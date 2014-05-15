@@ -1,8 +1,16 @@
 import QtQuick 2.0
 
 Item {
+
     width: 800
-    height: 480
+    height: 600
+
+    Image {
+        id: bg
+        anchors.fill: parent
+        source: "images/bg.jpg"
+        fillMode: Image.Tile
+    }
 
     // *** Game View ***
     GameView {
@@ -40,6 +48,11 @@ Item {
     // *** Main Menu panel ***
     MenuPanel {
         id: menuPanel
+    }
+
+    ResultPanel {
+        id: resultPanel
+        visible: false
     }
 
 }
