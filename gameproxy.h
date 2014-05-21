@@ -21,6 +21,8 @@ public:
     Q_INVOKABLE QString getColor(int index);
     Q_INVOKABLE void flip(int index);
     Q_INVOKABLE void flag(int index);
+    Q_INVOKABLE void finishGame(bool isWon);
+
     CellsModel* getGameModel();
 
     Q_PROPERTY(QString gameTime READ getGameTime WRITE setGameTime NOTIFY gameTimeChanged)
@@ -34,6 +36,10 @@ public:
     void setGameState(int value);
     int getGameState();
 
+    Q_PROPERTY(bool isPressed READ isPressed WRITE setIsPressed NOTIFY isPressedChanged)
+    bool isPressed();
+    void setIsPressed(bool value);
+
     enum States {
         GameNotStarted = 0,
         GameContinuing = 1,
@@ -44,6 +50,7 @@ public:
 signals:
     void gameTimeChanged();
     void gameStateChanged();
+    void isPressedChanged();
 
 public slots:
     void onTimer();
@@ -69,6 +76,7 @@ private:
     QString m_strGameTime;
 
     int m_gameState;
+    bool m_isPressed;
 };
 
 #endif // GAMEPROXY_H

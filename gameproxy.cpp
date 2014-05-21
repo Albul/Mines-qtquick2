@@ -12,6 +12,8 @@ GameProxy::GameProxy(QObject *parent) :
 
     markedSound = new QSound(":/sounds/marked.wav");
     m_gameState = GameNotStarted;
+    m_isPressed = false;
+    setGameTime("00:00");
 }
 
 void GameProxy::createNewGame(int numCols, int numRows, int numMines) {
@@ -49,14 +51,12 @@ void GameProxy::flip(int index)
 
         // Conditions of loss
         if (tmpCell->hasMine()) {
-            setGameState(GameLost);
-            m_timer->stop();
+            finishGame(false);
         }
 
         // Conditions of win
         if (m_gameModel->getNumClosed() == m_gameModel->getNumMines()) {
-            setGameState(GameWon);
-            m_timer->stop();
+            finishGame(true);
         }
     }
 }
@@ -67,23 +67,18 @@ void GameProxy::flag(int index)
     if (!tmpCell->isOpened()) {
         tmpCell->setHasFlag(!tmpCell->hasFlag());
         markedSound->play();
+        setIsPressed(false);
     }
 }
 
-bool GameProxy::isWon()
+void GameProxy::finishGame(bool isWon)
 {
-    if (m_gameState == GameWon)
-        return true;
-    else
-        return false;
-}
+    m_timer->stop();
 
-bool GameProxy::isCompleted()
-{
-    if (m_gameState == GameWon || m_gameState == GameLost)
-        return true;
+    if (isWon)
+        setGameState(GameWon);
     else
-        return false;
+        setGameState(GameLost);
 }
 
 
@@ -102,6 +97,22 @@ void GameProxy::setGameState(int value)
     emit gameStateChanged();
 }
 
+bool GameProxy::isCompleted()
+{
+    if (m_gameState == GameWon || m_gameState == GameLost)
+        return true;
+    else
+        return false;
+}
+
+bool GameProxy::isWon()
+{
+    if (m_gameState == GameWon)
+        return true;
+    else
+        return false;
+}
+
 QString GameProxy::getGameTime()
 {
     return m_strGameTime;
@@ -114,6 +125,20 @@ void GameProxy::setGameTime(QString value)
     }
     m_strGameTime = value;
     emit gameTimeChanged();
+}
+
+bool GameProxy::isPressed()
+{
+    return m_isPressed;
+}
+
+void GameProxy::setIsPressed(bool value)
+{
+    if(m_isPressed == value) {
+        return ;
+    }
+    m_isPressed = value;
+    emit isPressedChanged();
 }
 
 CellsModel* GameProxy::getGameModel()
