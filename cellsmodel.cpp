@@ -3,22 +3,16 @@
 CellsModel::CellsModel(QObject *parent) :
     QAbstractListModel(parent)
 {
-    _gameState = GameContinuing;
 }
 
-bool CellsModel::isCompleted() {
-    if (_gameState == GameContinuing)
-        return false;
-    else
-        return true;
-}
-
-void CellsModel::setGameState(int value)
+int CellsModel::getNumRows()
 {
-    if (_gameState == value)
-        return ;
-    _gameState = value;
-    emit gameStateChanged();
+    return m_numRows;
+}
+
+int CellsModel::getNumCols()
+{
+    return m_numCols;
 }
 
 int CellsModel::getNumMines()
@@ -29,6 +23,11 @@ int CellsModel::getNumMines()
 int CellsModel::getNumCells()
 {
     return m_listCells.count();
+}
+
+int CellsModel::getNumClosed()
+{
+    return m_numClosed;
 }
 
 Cell* CellsModel::getCell(int index)
@@ -101,6 +100,7 @@ QList <int> CellsModel::getNeighbors(int i)
 void CellsModel::openCell(int index)
 {
     this->getCell(index)->setIsOpened(true);
+    m_numClosed--;
 }
 
 void CellsModel::resetGame(int numCols, int numRows, int numMines)
@@ -109,7 +109,8 @@ void CellsModel::resetGame(int numCols, int numRows, int numMines)
     m_numCols = numCols;
     m_numRows = numRows;
     m_numMines = numMines;
-    initList();
+    m_numClosed = numCols * numRows;
+    initList();   
     endResetModel();
 }
 
@@ -130,8 +131,8 @@ QVariant CellsModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= m_listCells.count())
         return QVariant();
 
-        if (!index.isValid())
-            return QVariant();
+    if (!index.isValid())
+        return QVariant();
 
     if (role == DataRole)
         return qVariantFromValue(m_listCells.at(index.row()));

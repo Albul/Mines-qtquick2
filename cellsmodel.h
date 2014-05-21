@@ -11,14 +11,10 @@ class CellsModel : public QAbstractListModel
     //////////////// Public methods ////////////////
 public:
     enum CellRoles {
-        DataRole = Qt::UserRole + 1,
-        StateRole
+        DataRole = Qt::UserRole + 1
     };
 
     enum Constants {
-        GameContinuing = 0,
-        GameWon = 1,
-        GameLost = -1,
         Mine = -1
     };
 
@@ -31,18 +27,16 @@ public:
     void resetGame(int numCols, int numRows, int numMines);
     void openCell(int index);
 
-    int getNumMines();
+    Q_INVOKABLE int getNumRows();
+    Q_INVOKABLE int getNumCols();
+    Q_INVOKABLE int getNumMines();
     int getNumCells();
+    int getNumClosed();
     Cell* getCell(int i, int j);
     Cell* getCell(int index);
     QList <int> getNeighbors(int index);
 
-    Q_PROPERTY(bool isCompleted READ isCompleted WRITE setGameState NOTIFY gameStateChanged)
-    bool isCompleted();
-    void setGameState(int value);
-
 signals:
-    void gameStateChanged();
 
 public slots:
 
@@ -53,13 +47,12 @@ private:
 
     //////////////// Private members ////////////////
 private:
-    int _gameState;
     int m_numCols;
     int m_numRows;
     int m_numMines;
+    int m_numClosed;
 
     QList< Cell* > m_listCells;
-
 };
 
 #endif // CELLSMODEL_H

@@ -6,8 +6,8 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     MainWidget mainWidget;
-    mainWidget.showExpanded();
+//    mainWidget.showExpanded();
 //    mainWidget.showFullScreen();
-//    mainWidget.showMaximized();
+    mainWidget.showMaximized();
     return app.exec();
 }

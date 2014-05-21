@@ -5,6 +5,8 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
+QT += quick multimedia
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     mainwidget.cpp \
@@ -28,3 +30,6 @@ HEADERS += \
     cell.h \
     cellsmodel.h \
     gameproxy.h
+
+RESOURCES += \
+    res.qrc

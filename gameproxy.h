@@ -5,6 +5,9 @@
 #include "cellsmodel.h"
 #include "time.h"
 #include <QDebug>
+#include <QSound>
+#include <QTimer>
+#include <QTime>
 
 class GameProxy : public QObject
 {
@@ -20,9 +23,30 @@ public:
     Q_INVOKABLE void flag(int index);
     CellsModel* getGameModel();
 
+    Q_PROPERTY(QString gameTime READ getGameTime WRITE setGameTime NOTIFY gameTimeChanged)
+    QString getGameTime();
+    void setGameTime(QString value);
+
+    Q_PROPERTY(bool isCompleted READ isCompleted WRITE setGameState NOTIFY gameStateChanged)
+    Q_PROPERTY(bool isWon READ isWon WRITE setGameState NOTIFY gameStateChanged)
+    bool isWon();
+    bool isCompleted();
+    void setGameState(int value);
+    int getGameState();
+
+    enum States {
+        GameNotStarted = 0,
+        GameContinuing = 1,
+        GameWon = 2,
+        GameLost = 3,
+    };
+
 signals:
+    void gameTimeChanged();
+    void gameStateChanged();
 
 public slots:
+    void onTimer();
 
     //////////////// Private methods ////////////////
 private:
@@ -36,6 +60,15 @@ private:
 private:
     CellsModel* m_gameModel;
     QList <QString> m_colors;
+    QSound* markedSound;
+
+    QTimer* m_timer;
+    QTime m_startTime;
+    QTime m_curTime;
+    QTime m_gameTime;
+    QString m_strGameTime;
+
+    int m_gameState;
 };
 
 #endif // GAMEPROXY_H

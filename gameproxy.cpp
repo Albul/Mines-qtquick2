@@ -9,12 +9,23 @@ GameProxy::GameProxy(QObject *parent) :
     m_gameModel = new CellsModel();
     m_colors << "#0000FF" << "#00A000" << "#0000FF" << "#00007F" <<
                 "#A00000" << "#00CCFF" << "#A000A0" << "#000000";
+
+    markedSound = new QSound(":/sounds/marked.wav");
+    m_gameState = GameNotStarted;
 }
 
 void GameProxy::createNewGame(int numCols, int numRows, int numMines) {
     m_gameModel->resetGame(numCols, numRows, numMines);
     placeMines();
     calcCellsAll();
+
+    // Setting the time
+    m_curTime = m_startTime = QTime::currentTime();
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimer()));
+    m_timer->start(1000);
+
+    setGameState(GameContinuing);
 }
 
 QString GameProxy::getColor(int index)
@@ -27,21 +38,25 @@ QString GameProxy::getColor(int index)
     return m_colors.at(index);
 }
 
-CellsModel* GameProxy::getGameModel()
-{
-    return m_gameModel;
-}
-
 void GameProxy::flip(int index)
 {
     Cell* tmpCell = m_gameModel->getCell(index);
     if (!tmpCell->hasFlag()) {
-        m_gameModel->openCell(index);
         if (tmpCell->minesBeside() == 0) {
             this->searchEmpry(index);
-        }
+        } else
+            m_gameModel->openCell(index);
+
+        // Conditions of loss
         if (tmpCell->hasMine()) {
-            m_gameModel->setGameState(m_gameModel->GameLost);
+            setGameState(GameLost);
+            m_timer->stop();
+        }
+
+        // Conditions of win
+        if (m_gameModel->getNumClosed() == m_gameModel->getNumMines()) {
+            setGameState(GameWon);
+            m_timer->stop();
         }
     }
 }
@@ -51,7 +66,70 @@ void GameProxy::flag(int index)
     Cell* tmpCell = m_gameModel->getCell(index);
     if (!tmpCell->isOpened()) {
         tmpCell->setHasFlag(!tmpCell->hasFlag());
+        markedSound->play();
     }
+}
+
+bool GameProxy::isWon()
+{
+    if (m_gameState == GameWon)
+        return true;
+    else
+        return false;
+}
+
+bool GameProxy::isCompleted()
+{
+    if (m_gameState == GameWon || m_gameState == GameLost)
+        return true;
+    else
+        return false;
+}
+
+
+//////////////// getters & setters ////////////////
+
+int GameProxy::getGameState()
+{
+    return m_gameState;
+}
+
+void GameProxy::setGameState(int value)
+{
+    if (m_gameState == value)
+        return ;
+    m_gameState = value;
+    emit gameStateChanged();
+}
+
+QString GameProxy::getGameTime()
+{
+    return m_strGameTime;
+}
+
+void GameProxy::setGameTime(QString value)
+{
+    if(m_strGameTime == value) {
+        return ;
+    }
+    m_strGameTime = value;
+    emit gameTimeChanged();
+}
+
+CellsModel* GameProxy::getGameModel()
+{
+    return m_gameModel;
+}
+
+
+//////////////// public slots ////////////////
+
+void GameProxy::onTimer()
+{
+    m_curTime.restart();
+    QTime tmpTime(0, 0, 0, 0);
+    m_gameTime = tmpTime.addSecs(m_startTime.secsTo(m_curTime));
+    setGameTime(m_gameTime.toString("mm:ss"));
 }
 
 
@@ -119,7 +197,7 @@ void GameProxy::searchEmpry(int index)
         tmpIndex = neighbors.at(i);
         tmpCell =  m_gameModel->getCell(tmpIndex);
         if (!tmpCell->hasMine() && !tmpCell->isOpened()) {
-           searchEmpry(tmpIndex);
+            searchEmpry(tmpIndex);
         }
     }
 }
