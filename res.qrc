@@ -1,5 +1,15 @@
 <RCC>
-    <qresource prefix="/sounds">
-        <file>marked.wav</file>
+    <qresource>
+        <file>sounds/marked.wav</file>
+        <file>images/bg.jpg</file>
+        <file>images/logo.png</file>
+        <file>images/face-cool.png</file>
+        <file>images/face-sad.png</file>
+        <file>images/face-smile.png</file>
+        <file>images/face-win.png</file>
+        <file>images/face-worried.png</file>
+        <file>images/flag.png</file>
+        <file>images/mine.png</file>
+        <file>images/stroke.png</file>
     </qresource>
 </RCC>
