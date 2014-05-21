@@ -8,7 +8,7 @@ Item {
     Image {
         id: bg
         anchors.fill: parent
-        source: "images/bg.jpg"
+        source: "qrc:///images/bg.jpg"
         fillMode: Image.Tile
     }
 
@@ -16,7 +16,7 @@ Item {
     GameView {
         id: gameView
         // Gameview is disabled when gameViewHider is shown
-        enabled: gameViewHider.state == "hide"
+        enabled: gameViewHider.state == "hidden"
     }
 
     // *** Game View Hider ***
@@ -27,20 +27,28 @@ Item {
         opacity: 0.7
 
         states: [
-        State {
-            name: "hide"
-            when: menuPanel.state == "hide"
-            PropertyChanges {
-                target: gameViewHider
-                opacity: 0.0
+            State {
+                name: "shown"
+                when: menuPanel.state != "hidden" || resultPanel.state == "shown"
+                PropertyChanges {
+                    target: gameViewHider
+                    opacity: 0.7
+                }
+            },
+            State {
+                name: "hidden"
+                when: menuPanel.state == "hidden"
+                PropertyChanges {
+                    target: gameViewHider
+                    opacity: 0.0
+                }
             }
-        }
         ]
 
         transitions: Transition {
             NumberAnimation {
                 properties: "opacity"
-                duration: 400
+                duration: 800
             }
         }
     }
@@ -52,7 +60,5 @@ Item {
 
     ResultPanel {
         id: resultPanel
-        visible: false
     }
-
 }

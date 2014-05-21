@@ -4,6 +4,7 @@ Item {
     id: menuPanel
     width: parent.width
     height: parent.height
+    visible: true
 
     Frame {
         id: menuPanelFrame
@@ -16,14 +17,14 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            source: "images/mine100.png"
+            source: "qrc:///images/logo.png"
             Text {
                 anchors.centerIn: parent
                 font.family: "Sans"
-                font.pointSize: 34
+                font.pointSize: 38
                 smooth: true
                 color: "#12938d"
-                style: Text.Outline
+                style: Text.Raised
                 styleColor: "black"
                 text: "Сапёр"
             }
@@ -62,7 +63,7 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         font.family: "Helvetica"
                         font.pointSize: 15
-                        text: "\nThis game is the classical 5-in-a-row, also " +
+                        text: "\nЭта игра - класический сапер " +
                               "known as tic-tac-toe or Gomoku. Players place their " +
                               "tiles in turns, anywhere in the 19x19 size board. " +
                               "The winner is the first player to get an unbroken " +
@@ -72,7 +73,7 @@ Item {
                     }
                     Image {
                         id: aboutAreaLogo
-                        source: "images/quit.png"
+                        source: "qrc:///images/face-smile.png"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: aboutAreaText.bottom
                         anchors.topMargin: 10
@@ -116,7 +117,7 @@ Item {
                         }
                         gameView.boardGrid.columns = numCols;
                         gameProxy.createNewGame(numCols, numRows, numMines)
-                        menuPanel.state = "hide";
+                        menuPanel.state = "hidden";
                     }
                 }
             }
@@ -125,11 +126,12 @@ Item {
 
     states: [
         State {
-            name: "hide"
+            name: "hidden"
             PropertyChanges {
                 target: menuPanel
                 opacity: 0.0
                 y: - menuPanelFrame.height
+                visible: false
             }
         }
     ]
@@ -137,7 +139,11 @@ Item {
     transitions: Transition {
         NumberAnimation {
             properties: "opacity, y"
-            duration: 400
+            duration: 800
+        }
+        NumberAnimation {
+            properties: "visible"
+            duration: 900
         }
     }
 }

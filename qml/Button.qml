@@ -54,7 +54,7 @@ Item {
     Text {
         anchors.centerIn: parent
         font.family: "Sans"
-        font.pointSize: 15
+        font.pixelSize: normal.height / 2
         smooth: true
         color: {
             if (container.disabled)

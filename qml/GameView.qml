@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Window 2.1
 
 Item {
     id: gameView
@@ -34,4 +35,9 @@ Item {
         }
     }
 
+    ControlPanel {
+        id: controlPanel
+        anchors.right: boardFlickable.right
+        anchors.rightMargin: 10
+    }
 }

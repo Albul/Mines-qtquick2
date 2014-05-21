@@ -1,9 +1,11 @@
 import QtQuick 2.0
+import QtQuick.Window 2.1
 
 Item {
     id: cell
-    width: 60
-    height: 60
+    property int screenSize: Screen.desktopAvailableHeight > Screen.desktopAvailableWidth? Screen.desktopAvailableHeight : Screen.desktopAvailableWidth;
+    width: screenSize / 4 * 3 / 16;
+    height: this.width
 
     // Closed cell
     Rectangle {
@@ -38,7 +40,7 @@ Item {
     Image {
         id: mine
         anchors.centerIn: parent
-        source: "images/mine.png"
+        source: "qrc:///images/mine.png"
         visible: false
     }
 
@@ -46,7 +48,7 @@ Item {
     Image {
         id: flag
         anchors.centerIn: parent
-        source: "images/flag.png"
+        source: "qrc:///images/flag.png"
         visible: false
     }
 
@@ -54,7 +56,7 @@ Item {
     Image {
         id: stroke
         anchors.centerIn: parent
-        source: "images/stroke.png"
+        source: "qrc:///images/stroke.png"
         opacity: 0.7
         visible: false
     }
@@ -71,7 +73,7 @@ Item {
     MouseArea {
         id: mouseArea
         anchors.fill: parent
-        enabled: !model.isOpened && !gameModel.isCompleted
+        enabled: !model.isOpened
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
             if (mouse.button == Qt.RightButton) {
@@ -79,6 +81,15 @@ Item {
             } else {
                 gameProxy.flip(index);
             }
+        }
+        onPressAndHold: {
+            gameProxy.flag(index);
+        }
+        onPressed: {
+            gameProxy.isPressed = true;
+        }
+        onReleased: {
+            gameProxy.isPressed = false;
         }
     }
 
@@ -125,7 +136,7 @@ Item {
         },
         State {
             name: "closedFlag"
-            when: (!gameModel.isCompleted && modelData.hasFlag) || (gameModel.isCompleted && modelData.hasFlag && modelData.hasMine)
+            when: (!gameProxy.isCompleted && modelData.hasFlag) || (gameProxy.isCompleted && modelData.hasFlag && modelData.hasMine)
             PropertyChanges {
                 target: flag
                 visible: true
@@ -133,7 +144,7 @@ Item {
         },
         State {
             name: "closedMine"
-            when: gameModel.isCompleted && modelData.hasMine && !modelData.hasFlag
+            when: gameProxy.isCompleted && modelData.hasMine && !modelData.hasFlag
             PropertyChanges {
                 target: mine
                 visible: true
@@ -142,7 +153,7 @@ Item {
         ,
         State {
             name: "closedStroked"
-            when: gameModel.isCompleted && modelData.hasFlag && !modelData.hasMine
+            when: gameProxy.isCompleted && modelData.hasFlag && !modelData.hasMine
             PropertyChanges {
                 target: flag
                 visible: true
