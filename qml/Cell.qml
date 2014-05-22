@@ -3,8 +3,8 @@ import QtQuick.Window 2.1
 
 Item {
     id: cell
-    property int screenSize: Screen.desktopAvailableHeight > Screen.desktopAvailableWidth? Screen.desktopAvailableHeight : Screen.desktopAvailableWidth;
-    width: screenSize / 4 * 3 / 16;
+//    property int screenSize: Screen.desktopAvailableHeight > Screen.desktopAvailableWidth? Screen.desktopAvailableHeight : Screen.desktopAvailableWidth;
+    width: 60 * factor
     height: this.width
 
     // Closed cell
@@ -12,8 +12,8 @@ Item {
         id: closed
         anchors.fill: parent
         border.color: "#999999"
-        border.width: 1
-        radius: 6
+        border.width: 1 * factor
+        radius: 6 * factor
         smooth: true
         gradient: Gradient {
             GradientStop {position: 0.0; color: "#666666"}
@@ -26,8 +26,8 @@ Item {
         id: opened
         anchors.fill: parent
         border.color: "#999999"
-        border.width: 1
-        radius: 6
+        border.width: 1 * factor
+        radius: 6 * factor
         smooth: true
         gradient: Gradient {
             GradientStop {position: 0.0; color: "#c2ded0"}
@@ -39,6 +39,7 @@ Item {
     // Mine
     Image {
         id: mine
+        scale: factor
         anchors.centerIn: parent
         source: "qrc:///images/mine.png"
         visible: false
@@ -47,6 +48,7 @@ Item {
     // Flag
     Image {
         id: flag
+        scale: factor
         anchors.centerIn: parent
         source: "qrc:///images/flag.png"
         visible: false
@@ -55,6 +57,7 @@ Item {
     // Stroke
     Image {
         id: stroke
+        scale: factor
         anchors.centerIn: parent
         source: "qrc:///images/stroke.png"
         opacity: 0.7
@@ -64,7 +67,7 @@ Item {
     Text {
         id: minesAround
         anchors.centerIn: parent
-        font.pointSize: 28
+        font.pixelSize: 38 * factor
         color: gameProxy.getColor(modelData.minesBeside)
         text: modelData.minesBeside > 0? modelData.minesBeside : ""
         visible: false

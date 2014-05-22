@@ -17,7 +17,7 @@ Item {
     Flickable {
         id: boardFlickable
         anchors.fill: parent
-        contentWidth: boardGrid.width
+        contentWidth: boardGrid.width + controlPanel.width
         contentHeight: boardGrid.height
         maximumFlickVelocity: 500
         flickDeceleration: 1000
@@ -25,7 +25,7 @@ Item {
         Grid {
             id: boardGrid
             columns: 8
-            spacing: 1
+            spacing: 1 * factor
             x: gameView.width > boardGrid.width? (gameView.width - boardGrid.width) / 2 : 0
             y: gameView.height > boardGrid.height? (gameView.height - boardGrid.height) / 2 : 0
             Repeater {
@@ -38,6 +38,6 @@ Item {
     ControlPanel {
         id: controlPanel
         anchors.right: boardFlickable.right
-        anchors.rightMargin: 10
+        anchors.rightMargin: 10 * factor
     }
 }

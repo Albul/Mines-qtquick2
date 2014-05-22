@@ -7,15 +7,16 @@ Item {
     property bool disabled: false
     signal clicked
 
+    //    width: label.paintedWidth
     width: parent.width
-    height: 60
+    height: 60 * factor
 
     Rectangle {
         id: normal
         anchors.fill: parent
         border.color: "#999999"
-        border.width: 1
-        radius: 10
+        border.width: 1 * factor
+        radius: 10 * factor
         smooth: true
         gradient: Gradient {
             GradientStop {position: 0.0; color: "#666666"}
@@ -27,8 +28,8 @@ Item {
         id: pressed
         anchors.fill: parent
         border.color: "#999999"
-        border.width: 1
-        radius: 10
+        border.width: 1 * factor
+        radius: 10 * factor
         smooth: true
         opacity: 0
         gradient: Gradient {
@@ -41,8 +42,8 @@ Item {
         id: disabled
         anchors.fill: parent
         border.color: "#999999"
-        border.width: 1
-        radius: 10
+        border.width: 1 * factor
+        radius: 10 * factor
         smooth: true
         opacity: 0
         gradient: Gradient {
@@ -52,6 +53,7 @@ Item {
     }
 
     Text {
+        id: label
         anchors.centerIn: parent
         font.family: "Sans"
         font.pixelSize: normal.height / 2

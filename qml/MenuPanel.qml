@@ -8,26 +8,28 @@ Item {
 
     Frame {
         id: menuPanelFrame
-        width: 540
-        height: 415
+        width: 540 * factor
+        height: 415 * factor
         anchors.centerIn: parent
 
         Image {
             id: gameLogo
+            scale: factor
             anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.topMargin: 10 * factor * factor
             anchors.horizontalCenter: parent.horizontalCenter
             source: "qrc:///images/logo.png"
-            Text {
-                anchors.centerIn: parent
-                font.family: "Sans"
-                font.pointSize: 38
-                smooth: true
-                color: "#12938d"
-                style: Text.Raised
-                styleColor: "black"
-                text: "Сапёр"
-            }
+        }
+
+        Text {
+            anchors.centerIn: gameLogo
+            font.family: "Sans"
+            font.pixelSize: 78 * factor
+            smooth: true
+            color: "#12938d"
+            style: Text.Raised
+            styleColor: "black"
+            text: "Сапёр"
         }
 
         Row {
@@ -35,13 +37,14 @@ Item {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.top: gameLogo.bottom
-            anchors.margins: 10
-            spacing: 10
+            anchors.topMargin: 10 * factor * factor * factor
+            anchors.margins: 10 * factor
+            spacing: 10 * factor
 
             Frame {
                 id: aboutArea
-                width: 290
-                height: 285
+                width: 290 * factor
+                height: 285 * factor
 
                 gradient: Gradient {
                     GradientStop {position: 0.0; color: "#ffffff"}
@@ -57,18 +60,19 @@ Item {
                     clip: true
                     Text {
                         id: aboutAreaText
-                        width: parent.width - 20
+                        width: parent.width - 20 * factor
                         anchors.horizontalCenter: parent.horizontalCenter
                         wrapMode: Text.WordWrap
-                        horizontalAlignment: Text.AlignHCenter
+                        horizontalAlignment: Text.AlignJustify
                         font.family: "Helvetica"
-                        font.pointSize: 15
-                        text: "\nЭта игра - класический сапер " +
-                              "known as tic-tac-toe or Gomoku. Players place their " +
-                              "tiles in turns, anywhere in the 19x19 size board. " +
-                              "The winner is the first player to get an unbroken " +
-                              "row of five stones horizontally, vertically, or " +
-                              "diagonally.\n\nGame logic is implemented with Qt " +
+                        font.pixelSize: 20 * factor
+                        text: "\nЭта игра - клон классиче-ского сапера. " +
+                              "Смысл игры заключается в том чтобы открыть " +
+                              "все клетки на поле в которых не заложены мины. " +
+                              "Цифра в открытой клетке, указывает на коли-чество мин в соседних клетках. " +
+                              "Эта информация поможет вычислить в каких именно клетках " +
+                              "содержатся мины, и поставить на них флаги. " +
+                              "\n\nGame logic is implemented with Qt " +
                               "C++ and the UI with QML Declarative UI.\n\nEnjoy! =)\n"
                     }
                     Image {
@@ -76,15 +80,15 @@ Item {
                         source: "qrc:///images/face-smile.png"
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: aboutAreaText.bottom
-                        anchors.topMargin: 10
+                        anchors.topMargin: 10 * factor
                     }
                 }
             }
 
             Column {
-                width: parent.width - aboutArea.width - 10
-                spacing: 10
-                opacity: 1
+                width: parent.width - aboutArea.width - 10 * factor
+                spacing: 10 * factor
+
                 Button {
                     id: buttonRecords
                     text: "Рекорды"
@@ -92,8 +96,6 @@ Item {
 
                 RadioGroup {
                     id: buttonLevel
-                    width: parent.width
-                    height: 146
                 }
 
                 Button {

@@ -9,32 +9,32 @@ Item {
     signal stateChanged(bool state)
 
     width: parent.width
-    height: 30
+    height: 30 * factor
 
     Item {
         id: basisCircle
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: 10
-        width: 30
-        height: 30
+        anchors.margins: 10 * factor
+        width: 30 * factor
+        height: 30 * factor
 
         Rectangle {
             anchors.fill: parent
             border.color: "#8b888b"
-            border.width: 1
-            radius: width * 0.5
+            border.width: 1 * factor
+            radius: width * 0.5 * factor
             smooth: true
             color: "#131113"
         }
 
         Rectangle {
-            width: 26
-            height: 26
+            width: 26 * factor
+            height: 26 * factor
             anchors.centerIn: parent
             border.color: "#434443"
-            border.width: 7
-            radius: width * 0.5
+            border.width: 7 * factor
+            radius: width * 0.5 * factor
             smooth: true
             color: "#575757"
         }
@@ -43,22 +43,21 @@ Item {
     Rectangle {
         id: checkedCircle
         anchors.centerIn: basisCircle
-        width: 14
-        height: 14
-        radius: width * 0.5
+        width: 14 * factor
+        height: 14 * factor
+        radius: width * 0.5 * factor
         smooth: true
         opacity: 0
         color: "#0db493"
     }
 
     Text {
-//        anchors.centerIn: parent
-        anchors.leftMargin: 12
+        anchors.leftMargin: 12 * factor
         anchors.left: basisCircle.right
         anchors.horizontalCenter: basisCircle.horizontalCenter
 
         font.family: "Sans"
-        font.pointSize: 15
+        font.pointSize: 15 * factor
         smooth: true
         color: "#ffffff"
         text: container.text

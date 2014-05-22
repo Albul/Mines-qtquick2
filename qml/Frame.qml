@@ -4,8 +4,8 @@ Rectangle {
     width: parent.width
     height: parent.height
     border.color: "#999999"
-    border.width: 2
-    radius: 10
+    border.width: 2 * factor
+    radius: 10 * factor
     smooth: true
 
     gradient: Gradient {
