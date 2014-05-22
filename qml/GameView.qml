@@ -32,6 +32,10 @@ Item {
                 model: gameModel
                 Cell {}
             }
+
+        }
+        onMovementEnded: {
+            gameProxy.isPressed = false;
         }
     }
 
