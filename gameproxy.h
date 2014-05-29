@@ -3,11 +3,14 @@
 
 #include <QObject>
 #include "cellsmodel.h"
+#include "recordsmodel.h"
 #include "time.h"
 #include <QDebug>
 #include <QSound>
 #include <QTimer>
 #include <QTime>
+#include <QtSql>
+
 
 class GameProxy : public QObject
 {
@@ -22,8 +25,10 @@ public:
     Q_INVOKABLE void flip(int index);
     Q_INVOKABLE void flag(int index);
     Q_INVOKABLE void finishGame(bool isWon);
+    Q_INVOKABLE void addRecord(QString name);
 
     CellsModel* getGameModel();
+    RecordsModel* getRecordsModel();
 
     Q_PROPERTY(QString gameTime READ getGameTime WRITE setGameTime NOTIFY gameTimeChanged)
     QString getGameTime();
@@ -35,6 +40,10 @@ public:
     bool isCompleted();
     void setGameState(int value);
     int getGameState();
+
+    Q_PROPERTY(bool isRecord READ isRecord WRITE setIsRecord NOTIFY isRecordChanged)
+    bool isRecord();
+    void setIsRecord(bool value);
 
     Q_PROPERTY(bool isPressed READ isPressed WRITE setIsPressed NOTIFY isPressedChanged)
     bool isPressed();
@@ -51,9 +60,11 @@ signals:
     void gameTimeChanged();
     void gameStateChanged();
     void isPressedChanged();
+    void isRecordChanged();
 
 public slots:
     void onTimer();
+    void onUsernameInputed(const QString &name);
 
     //////////////// Private methods ////////////////
 private:
@@ -66,6 +77,8 @@ private:
     //////////////// Private members ////////////////
 private:
     CellsModel* m_gameModel;
+    RecordsModel* m_recordsModel;
+
     QList <QString> m_colors;
     QSound* markedSound;
 
@@ -77,6 +90,7 @@ private:
 
     int m_gameState;
     bool m_isPressed;
+    bool m_isRecord;
 };
 
 #endif // GAMEPROXY_H

@@ -1,12 +1,15 @@
-import QtQuick 2.0
+import QtQuick 2.2
 
 Item {
     id: resultPanel
+    objectName: "resultPanel"
     width: parent.width
     height: parent.height
     visible: false
     opacity: 0
     y: -resultPanelFrame.height
+
+    signal usernameReceived(string name)
 
     Frame {
         id: resultPanelFrame
@@ -34,7 +37,7 @@ Item {
             color: gameProxy.isWon? "#0e746f" : "#ca4949"
             style: Text.Raised
             styleColor: "black"
-            text: gameProxy.isWon? "Вы выиграли" : "Вы проиграли"
+            text: gameProxy.isWon? (gameProxy.isRecord? "Новый рекорд" : "Вы выиграли") : "Вы проиграли"
         }
 
         Text {
@@ -51,10 +54,24 @@ Item {
             text: "Время игры: " + gameProxy.gameTime
         }
 
+        TextInput {
+            id: inputName
+            anchors.top: timeText.bottom
+            anchors.topMargin: 10 * factor
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 20 * factor
+            visible: false
+            onAccepted: {
+                this.focus = false;
+                gameProxy.addRecord(this.text);
+                this.visible = false;
+            }
+        }
+
         Column {
             width: parent.width / 3 * 2
-            anchors.top: timeText.bottom
-            anchors.topMargin: 50 * factor
+            anchors.top: inputName.bottom
+            anchors.topMargin: 20 * factor
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10 * factor
             Button {
@@ -72,7 +89,6 @@ Item {
                 }
             }
         }
-
     }
 
     states: [
@@ -84,6 +100,15 @@ Item {
                 visible: true
                 opacity: 1.0
                 y: 0
+            }
+            PropertyChanges {
+                target: inputName
+                text: "Введите ваше имя <Enter>"
+                visible: gameProxy.isRecord
+                focus: gameProxy.isRecord
+            }
+            StateChangeScript  {
+                script: inputName.selectAll();
             }
         },
         State {

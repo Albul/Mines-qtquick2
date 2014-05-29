@@ -12,17 +12,20 @@ Item {
         height: 415 * factor
         anchors.centerIn: parent
 
-        Image {
-            id: gameLogo
-            scale: factor
+        //        Image {
+        //            id: gameLogo
+        //            scale: factor
+        //            anchors.top: parent.top
+        //            anchors.topMargin: 10 * factor * factor
+        //            anchors.horizontalCenter: parent.horizontalCenter
+        //            source: "qrc:///images/logo.png"
+        //        }
+
+        Text {
+            id: title
             anchors.top: parent.top
             anchors.topMargin: 10 * factor * factor
             anchors.horizontalCenter: parent.horizontalCenter
-            source: "qrc:///images/logo.png"
-        }
-
-        Text {
-            anchors.centerIn: gameLogo
             font.family: "Sans"
             font.pixelSize: 78 * factor
             smooth: true
@@ -36,8 +39,8 @@ Item {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            anchors.top: gameLogo.bottom
-            anchors.topMargin: 10 * factor * factor * factor
+            anchors.top: title.bottom
+            anchors.topMargin: 10 * factor
             anchors.margins: 10 * factor
             spacing: 10 * factor
 
@@ -92,6 +95,10 @@ Item {
                 Button {
                     id: buttonRecords
                     text: "Рекорды"
+                    onClicked: {
+                        menuPanel.state = "hidden";
+                        recordsPanel.state = "shown";
+                    }
                 }
 
                 RadioGroup {

@@ -13,7 +13,12 @@ GameProxy::GameProxy(QObject *parent) :
     markedSound = new QSound(":/sounds/marked.wav");
     m_gameState = GameNotStarted;
     m_isPressed = false;
+    m_isRecord = false;
     setGameTime("00:00");
+
+    // Setting the database
+    m_recordsModel = new RecordsModel();
+    m_recordsModel->initDb();
 }
 
 void GameProxy::createNewGame(int numCols, int numRows, int numMines) {
@@ -26,6 +31,8 @@ void GameProxy::createNewGame(int numCols, int numRows, int numMines) {
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     m_timer->start(1000);
+    setGameTime("00:00");
+    setIsRecord(false);
 
     setGameState(GameContinuing);
 }
@@ -75,14 +82,32 @@ void GameProxy::finishGame(bool isWon)
 {
     m_timer->stop();
 
-    if (isWon)
+    if (isWon) {
+        int mines = m_gameModel->getNumMines();
+        int cells = m_gameModel->getNumCells();
+        int time = m_gameTime.second();
+        float factor = static_cast< float >(mines) / static_cast< float >(cells * time);
+        int pos = m_recordsModel->isRecord(factor);
+        if (pos > 0)
+            setIsRecord(true);
+        //
         setGameState(GameWon);
+    }
     else
         setGameState(GameLost);
 }
 
+void GameProxy::addRecord(QString name)
+{
+    int mines = m_gameModel->getNumMines();
+    int cells = m_gameModel->getNumCells();
+    int time = m_gameTime.second();
+    float factor = static_cast< float >(mines) / static_cast< float >(cells * time);
+    int pos = m_recordsModel->isRecord(factor);
+    m_recordsModel->addNewRecord(pos, name, m_gameModel->getNumCols(), m_gameModel->getNumRows(), mines, time, factor);
+}
 
-//////////////// getters & setters ////////////////
+//////////////// Getters & setters ////////////////
 
 int GameProxy::getGameState()
 {
@@ -127,6 +152,20 @@ void GameProxy::setGameTime(QString value)
     emit gameTimeChanged();
 }
 
+bool GameProxy::isRecord()
+{
+    return m_isRecord;
+}
+
+void GameProxy::setIsRecord(bool value)
+{
+    if(m_isRecord == value) {
+        return ;
+    }
+    m_isRecord = value;
+    emit isRecordChanged();
+}
+
 bool GameProxy::isPressed()
 {
     return m_isPressed;
@@ -146,8 +185,13 @@ CellsModel* GameProxy::getGameModel()
     return m_gameModel;
 }
 
+RecordsModel* GameProxy::getRecordsModel()
+{
+    return m_recordsModel;
+}
 
-//////////////// public slots ////////////////
+
+//////////////// Public slots ////////////////
 
 void GameProxy::onTimer()
 {
@@ -157,6 +201,10 @@ void GameProxy::onTimer()
     setGameTime(m_gameTime.toString("mm:ss"));
 }
 
+void GameProxy::onUsernameInputed(const QString &name)
+{
+    qDebug() << name;
+}
 
 //////////////// Private methods ////////////////
 
