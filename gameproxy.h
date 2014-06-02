@@ -2,15 +2,13 @@
 #define GAMEPROXY_H
 
 #include <QObject>
-#include "cellsmodel.h"
+#include "fieldmodel.h"
 #include "recordsmodel.h"
 #include "time.h"
-#include <QDebug>
 #include <QSound>
 #include <QTimer>
 #include <QTime>
 #include <QtSql>
-
 
 class GameProxy : public QObject
 {
@@ -25,9 +23,8 @@ public:
     Q_INVOKABLE void flip(int index);
     Q_INVOKABLE void flag(int index);
     Q_INVOKABLE void finishGame(bool isWon);
-    Q_INVOKABLE void addRecord(QString name);
 
-    CellsModel* getGameModel();
+    FieldModel* getFieldModel();
     RecordsModel* getRecordsModel();
 
     Q_PROPERTY(QString gameTime READ getGameTime WRITE setGameTime NOTIFY gameTimeChanged)
@@ -76,7 +73,7 @@ private:
 
     //////////////// Private members ////////////////
 private:
-    CellsModel* m_gameModel;
+    FieldModel* m_fieldModel;
     RecordsModel* m_recordsModel;
 
     QList <QString> m_colors;
@@ -88,6 +85,7 @@ private:
     QTime m_gameTime;
     QString m_strGameTime;
 
+    DataRecord m_lastRecord;
     int m_gameState;
     bool m_isPressed;
     bool m_isRecord;

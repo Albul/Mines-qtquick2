@@ -1,24 +1,23 @@
-#ifndef CELLSMODEL_H
-#define CELLSMODEL_H
+#ifndef FIELDMODEL_H
+#define FIELDMODEL_H
 
 #include <QAbstractListModel>
 #include "cell.h"
+#include <cstddef>
 
-class CellsModel : public QAbstractListModel
+class FieldModel : public QAbstractListModel
 {
     Q_OBJECT
 
     //////////////// Public methods ////////////////
 public:
-    enum CellRoles {
-        DataRole = Qt::UserRole + 1
-    };
 
     enum Constants {
         Mine = -1
     };
 
-    explicit CellsModel(QObject *parent = 0);
+    explicit FieldModel(QObject *parent = 0);
+    ~FieldModel();
 
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
@@ -32,8 +31,8 @@ public:
     Q_INVOKABLE int getNumMines();
     int getNumCells();
     int getNumClosed();
-    Cell* getCell(int i, int j);
-    Cell* getCell(int index);
+    Cell* getCell(int i, int j) const;
+    Cell* getCell(int index) const;
     QList <int> getNeighbors(int index);
 
 signals:
@@ -43,7 +42,9 @@ public slots:
     //////////////// Private methods ////////////////
 private:
     void initList();
-    bool isValid(int index);
+    bool isValid(int index) const;
+    bool isLeftmost(int index) const;
+    bool isRightmost(int index) const;
 
     //////////////// Private members ////////////////
 private:
@@ -53,6 +54,12 @@ private:
     int m_numClosed;
 
     QList< Cell* > m_listCells;
+
+    //////////////// Private enumerations ////////////////
+private:
+    enum FieldRoles {
+        DataRole = Qt::UserRole + 1
+    };
 };
 
-#endif // CELLSMODEL_H
+#endif // FIELDMODEL_H

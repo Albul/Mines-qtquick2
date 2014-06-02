@@ -29,7 +29,7 @@ Item {
             x: gameView.width > boardGrid.width? (gameView.width - boardGrid.width) / 2 : 0
             y: gameView.height > boardGrid.height? (gameView.height - boardGrid.height) / 2 : 0
             Repeater {
-                model: gameModel
+                model: fieldModel
                 Cell {}
             }
 

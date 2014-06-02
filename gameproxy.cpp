@@ -6,7 +6,7 @@
 GameProxy::GameProxy(QObject *parent) :
     QObject(parent)
 {
-    m_gameModel = new CellsModel();
+    m_fieldModel = new FieldModel();
     m_colors << "#0000FF" << "#00A000" << "#0000FF" << "#00007F" <<
                 "#A00000" << "#00CCFF" << "#A000A0" << "#000000";
 
@@ -22,7 +22,7 @@ GameProxy::GameProxy(QObject *parent) :
 }
 
 void GameProxy::createNewGame(int numCols, int numRows, int numMines) {
-    m_gameModel->resetGame(numCols, numRows, numMines);
+    m_fieldModel->resetGame(numCols, numRows, numMines);
     placeMines();
     calcCellsAll();
 
@@ -49,20 +49,17 @@ QString GameProxy::getColor(int index)
 
 void GameProxy::flip(int index)
 {
-    Cell* tmpCell = m_gameModel->getCell(index);
+    Cell* tmpCell = m_fieldModel->getCell(index);
     if (!tmpCell->hasFlag()) {
         if (tmpCell->minesBeside() == 0) {
             this->searchEmpry(index);
         } else
-            m_gameModel->openCell(index);
+            m_fieldModel->openCell(index);
 
-        // Conditions of loss
+        // Conditions of loss and win
         if (tmpCell->hasMine()) {
             finishGame(false);
-        }
-
-        // Conditions of win
-        if (m_gameModel->getNumClosed() == m_gameModel->getNumMines()) {
+        } else if (m_fieldModel->getNumClosed() == m_fieldModel->getNumMines()) {
             finishGame(true);
         }
     }
@@ -70,7 +67,7 @@ void GameProxy::flip(int index)
 
 void GameProxy::flag(int index)
 {
-    Cell* tmpCell = m_gameModel->getCell(index);
+    Cell* tmpCell = m_fieldModel->getCell(index);
     if (!tmpCell->isOpened()) {
         tmpCell->setHasFlag(!tmpCell->hasFlag());
         markedSound->play();
@@ -83,29 +80,26 @@ void GameProxy::finishGame(bool isWon)
     m_timer->stop();
 
     if (isWon) {
-        int mines = m_gameModel->getNumMines();
-        int cells = m_gameModel->getNumCells();
-        int time = m_gameTime.second();
-        float factor = static_cast< float >(mines) / static_cast< float >(cells * time);
+        float mines = static_cast< float >(m_fieldModel->getNumMines());
+        float cells = static_cast< float >(m_fieldModel->getNumCells());
+        float time = static_cast< float >(m_gameTime.minute() * 60 + m_gameTime.second());
+        float factor = 1 / time + mines * 0.022 + 1 / cells;
         int pos = m_recordsModel->isRecord(factor);
-        if (pos > 0)
+        if (pos > 0) {
+            m_lastRecord.position = pos;
+            m_lastRecord.numCols = m_fieldModel->getNumCols();
+            m_lastRecord.numRows = m_fieldModel->getNumRows();
+            m_lastRecord.numMines = m_fieldModel->getNumMines();
+            m_lastRecord.seconds = m_gameTime.minute() * 60 + m_gameTime.second();
+            m_lastRecord.factor = factor;
             setIsRecord(true);
-        //
+        }
         setGameState(GameWon);
     }
     else
         setGameState(GameLost);
 }
 
-void GameProxy::addRecord(QString name)
-{
-    int mines = m_gameModel->getNumMines();
-    int cells = m_gameModel->getNumCells();
-    int time = m_gameTime.second();
-    float factor = static_cast< float >(mines) / static_cast< float >(cells * time);
-    int pos = m_recordsModel->isRecord(factor);
-    m_recordsModel->addNewRecord(pos, name, m_gameModel->getNumCols(), m_gameModel->getNumRows(), mines, time, factor);
-}
 
 //////////////// Getters & setters ////////////////
 
@@ -180,9 +174,9 @@ void GameProxy::setIsPressed(bool value)
     emit isPressedChanged();
 }
 
-CellsModel* GameProxy::getGameModel()
+FieldModel* GameProxy::getFieldModel()
 {
-    return m_gameModel;
+    return m_fieldModel;
 }
 
 RecordsModel* GameProxy::getRecordsModel()
@@ -203,7 +197,8 @@ void GameProxy::onTimer()
 
 void GameProxy::onUsernameInputed(const QString &name)
 {
-    qDebug() << name;
+    m_lastRecord.name = name;
+    m_recordsModel->addNewRecord(&m_lastRecord);
 }
 
 //////////////// Private methods ////////////////
@@ -220,12 +215,12 @@ int GameProxy::getRandom(int min, int max)
 
 void GameProxy::placeMines()
 {
-    int mines = m_gameModel->getNumMines();
+    int mines = m_fieldModel->getNumMines();
     int randIndex;
     Cell* randCell;
     while (mines) {
-        randIndex = getRandom(0, m_gameModel->getNumCells());
-        randCell = m_gameModel->getCell(randIndex);
+        randIndex = getRandom(0, m_fieldModel->getNumCells());
+        randCell = m_fieldModel->getCell(randIndex);
         if (!randCell->hasMine()) {
             randCell->setHasMine(true);
             mines--;
@@ -236,9 +231,9 @@ void GameProxy::placeMines()
 int GameProxy::calcCell(int index)
 {
     int count = 0;
-    QList <int> neighbors = m_gameModel->getNeighbors(index);
+    QList <int> neighbors = m_fieldModel->getNeighbors(index);
     for (int i = 0, length = neighbors.length(); i < length; i++) {
-        if (m_gameModel->getCell(neighbors.at(i))->hasMine())
+        if (m_fieldModel->getCell(neighbors.at(i))->hasMine())
             count++;
     }
     return count;
@@ -247,10 +242,10 @@ int GameProxy::calcCell(int index)
 void GameProxy::calcCellsAll()
 {
     Cell* tmpCell;
-    for (int i = 0, length = m_gameModel->getNumCells(); i < length; i++) {
-        tmpCell = m_gameModel->getCell(i);
+    for (int i = 0, length = m_fieldModel->getNumCells(); i < length; i++) {
+        tmpCell = m_fieldModel->getCell(i);
         if (tmpCell->hasMine())
-            tmpCell->setMinesBeside(m_gameModel->Mine);
+            tmpCell->setMinesBeside(m_fieldModel->Mine);
         else
             tmpCell->setMinesBeside(calcCell(i));
     }
@@ -259,16 +254,16 @@ void GameProxy::calcCellsAll()
 void GameProxy::searchEmpry(int index)
 {
     Cell* tmpCell;
-    m_gameModel->openCell(index);
-    tmpCell = m_gameModel->getCell(index);
+    m_fieldModel->openCell(index);
+    tmpCell = m_fieldModel->getCell(index);
     if (tmpCell->minesBeside() > 0) return;
 
-    QList <int> neighbors = m_gameModel->getNeighbors(index);
+    QList <int> neighbors = m_fieldModel->getNeighbors(index);
     int tmpIndex;
 
     for (int i = 0, length = neighbors.length(); i < length; i++) {
         tmpIndex = neighbors.at(i);
-        tmpCell =  m_gameModel->getCell(tmpIndex);
+        tmpCell =  m_fieldModel->getCell(tmpIndex);
         if (!tmpCell->hasMine() && !tmpCell->isOpened()) {
             searchEmpry(tmpIndex);
         }

@@ -10,10 +10,10 @@ QT += quick multimedia sql
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     mainwidget.cpp \
-    cellsmodel.cpp \
     cell.cpp \
     gameproxy.cpp \
-    recordsmodel.cpp
+    recordsmodel.cpp \
+    fieldmodel.cpp
 
 # Installation path
 # target.path =
@@ -29,9 +29,9 @@ OTHER_FILES += \
 HEADERS += \
     mainwidget.h \
     cell.h \
-    cellsmodel.h \
     gameproxy.h \
-    recordsmodel.h
+    recordsmodel.h \
+    fieldmodel.h
 
 RESOURCES += \
     res.qrc

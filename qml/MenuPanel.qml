@@ -12,15 +12,6 @@ Item {
         height: 415 * factor
         anchors.centerIn: parent
 
-        //        Image {
-        //            id: gameLogo
-        //            scale: factor
-        //            anchors.top: parent.top
-        //            anchors.topMargin: 10 * factor * factor
-        //            anchors.horizontalCenter: parent.horizontalCenter
-        //            source: "qrc:///images/logo.png"
-        //        }
-
         Text {
             id: title
             anchors.top: parent.top
@@ -58,7 +49,7 @@ Item {
                     id: aboutAreaFlickable
                     anchors.fill: parent
                     contentWidth: aboutArea.width
-                    contentHeight: aboutAreaText.height + aboutAreaLogo.height + 20
+                    contentHeight: aboutAreaText.height + 20
                     flickableDirection: Flickable.VerticalFlick
                     clip: true
                     Text {
@@ -69,21 +60,17 @@ Item {
                         horizontalAlignment: Text.AlignJustify
                         font.family: "Helvetica"
                         font.pixelSize: 20 * factor
-                        text: "\nЭта игра - клон классиче-ского сапера. " +
+                        textFormat: Text.RichText
+                        text: "<br>Эта игра - клон классиче-ского сапера. " +
                               "Смысл игры заключается в том чтобы открыть " +
-                              "все клетки на поле в которых не заложены мины. " +
-                              "Цифра в открытой клетке, указывает на коли-чество мин в соседних клетках. " +
-                              "Эта информация поможет вычислить в каких именно клетках " +
+                              "все ячейки на поле в которых не заложены мины. " +
+                              "Цифра в открытой ячейке, указывает на коли-чество мин в соседних ячейках. " +
+                              "Эта информация поможет вычислить в каких именно ячейках " +
                               "содержатся мины, и поставить на них флаги. " +
-                              "\n\nGame logic is implemented with Qt " +
-                              "C++ and the UI with QML Declarative UI.\n\nEnjoy! =)\n"
-                    }
-                    Image {
-                        id: aboutAreaLogo
-                        source: "qrc:///images/face-smile.png"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: aboutAreaText.bottom
-                        anchors.topMargin: 10 * factor
+                              "<br><br>Игра создана с помощью технологии Qt Quick. " +
+                              "Логика игры реализована на C++, интерфейс на QML. " +
+                              "Игра со-здана как обучающее посо-бие для сайта <a href=\"http://gamecook.org\">gamecook.org</a><br>"
+                        onLinkActivated: Qt.openUrlExternally(link)
                     }
                 }
             }
@@ -113,11 +100,11 @@ Item {
                         switch (buttonLevel.state) {
                         case 0:
                             numCols = numRows = 8;
-                            numMines = 10;
+                            numMines = 5;
                             break;
                         case 1:
                             numCols = numRows = 10;
-                            numMines = 15;
+                            numMines = 10;
                             break;
                         case 2:
                             numCols = numRows = 16;

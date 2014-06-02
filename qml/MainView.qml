@@ -29,16 +29,8 @@ Item {
 
         states: [
             State {
-                name: "shown"
-                when: menuPanel.state != "hidden" || resultPanel.state == "shown"
-                PropertyChanges {
-                    target: gameViewHider
-                    opacity: 0.7
-                }
-            },
-            State {
                 name: "hidden"
-                when: menuPanel.state == "hidden"
+                when: recordsPanel.state == "" && menuPanel.state == "hidden" && resultPanel.state == "hidden"
                 PropertyChanges {
                     target: gameViewHider
                     opacity: 0.0

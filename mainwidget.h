@@ -2,6 +2,7 @@
 #define MAINWIDGET_H
 
 #include <QQmlContext>
+#include <QQuickItem>
 #include "qtquick2applicationviewer.h"
 #include "gameproxy.h"
 

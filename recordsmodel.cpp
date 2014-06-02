@@ -1,12 +1,17 @@
 #include "recordsmodel.h"
 
-RecordsModel::RecordsModel()
+RecordsModel::RecordsModel(QObject *parent):
+    QAbstractListModel(parent)
 {
 }
 
-/// Setting the database
-/// \brief RecordsModel::initDb
-///
+RecordsModel::~RecordsModel()
+{
+}
+
+/*!
+ * \brief RecordsModel::initDb Setting the database
+ */
 void RecordsModel::initDb()
 {
     beginResetModel();
@@ -18,39 +23,53 @@ void RecordsModel::initDb()
     }
 
     m_query = new QSqlQuery(m_dbRecords);
-    QString strQuery = "CREATE TABLE records_table ("
+    QString strQuery = "CREATE TABLE records ("
             "number integer PRIMARY KEY, "
             "name VARCHAR(255), "
             "rows integer, "
             "cols integer, "
             "mines integer, "
-            "time integer, "
+            "seconds integer, "
             "factor real"
             ");";
     bool b = m_query->exec(strQuery);
     if (!b) {
         qDebug() << "creating table: " << m_query->lastError().text();
     } else {
-        strQuery = "INSERT INTO records_table (number, name, rows, cols, mines, time, factor) "
-                "VALUES (1, 'empty', 8, 8, 10, 250, 0.000625);";
-        b = m_query->prepare(strQuery);
-        b = m_query->exec();
-        strQuery = "INSERT INTO records_table (number, name, rows, cols, mines, time, factor) "
-                "VALUES (2, 'atari', 10, 10, 15, 200, 0.00075);";
-        b = m_query->prepare(strQuery);
+        strQuery = "INSERT INTO records (number, name, rows, cols, mines, seconds, factor) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?);";
+        m_query->prepare(strQuery);
+        m_query->bindValue(Number, 1);
+        m_query->bindValue(Name, "Null");
+        m_query->bindValue(Rows, 10);
+        m_query->bindValue(Cols, 10);
+        m_query->bindValue(Mines, 15);
+        m_query->bindValue(Seconds, 83);
+        m_query->bindValue(Factor, 0.1721);
+
         b = m_query->exec();
         if (!b) {
-            qDebug() <<  "inserting init records: " << m_query->lastError().text();
+            qDebug() <<  "inserting initial records: " << m_query->lastError().text();
+        }
+        m_query->prepare(strQuery);
+        m_query->bindValue(Number, 2);
+        m_query->bindValue(Name, "Empty");
+        m_query->bindValue(Rows, 8);
+        m_query->bindValue(Cols, 8);
+        m_query->bindValue(Mines, 10);
+        m_query->bindValue(Seconds, 72);
+        m_query->bindValue(Factor, 0.1295);
+        b = m_query->exec();
+        if (!b) {
+            qDebug() <<  "inserting initial records: " << m_query->lastError().text();
         }
     }
 
-    b = m_query->exec("SELECT * FROM records_table");
+    b = m_query->exec("SELECT * FROM records");
     if (!b) {
         qDebug() <<  "selecting: " << m_query->lastError().text();
     }
-    m_query->last();
-    m_size = m_query->at() + 1;
-    m_query->first();
+    refreshQuery();
     endResetModel();
 }
 
@@ -68,20 +87,20 @@ QVariant RecordsModel::data(const QModelIndex &index, int role) const
     QVariant value;
     switch (role) {
     case NumberRole:
-        value = m_query->value(0);
+        value = m_query->value(Number);
         break;
     case NameRole:
-        value = m_query->value(1);
+        value = m_query->value(Name);
         break;
     case CellsRole:
-        value = qVariantFromValue(m_query->value(2).toString() + " / " + m_query->value(3).toString());
+        value = qVariantFromValue(m_query->value(Rows).toString() + " / " + m_query->value(Cols).toString());
         break;
     case MinesRole:
-        value = m_query->value(4);
+        value = m_query->value(Mines);
         break;
     case TimeRole: {
-        int refMinutes = m_query->value(5).toInt() / 60;
-        int refSeconds = m_query->value(5).toInt() % 60;
+        int refMinutes = m_query->value(Seconds).toInt() / 60;
+        int refSeconds = m_query->value(Seconds).toInt() % 60;
 
         QString strTime = refMinutes >= 10?  QString::number(refMinutes) : "0" + QString::number(refMinutes);
         strTime += ":";
@@ -106,32 +125,38 @@ QHash<int, QByteArray> RecordsModel::roleNames() const {
     return roles;
 }
 
+/*!
+ * \brief RecordsModel::isRecord
+ * \param factor
+ * \return
+ */
 int RecordsModel::isRecord(float factor)
 {
     QSqlQuery query;
-    query.exec("SELECT * FROM records_table");
-    query.first();
-    int i = 1;
-    while(i <= m_size) {
-        if (factor > query.value(6).toFloat()) {
-            return i;
-        }
-        query.next();
-        i++;
+    query.exec("SELECT * FROM records");
+    query.last();
+    int i = m_size;
+    while(i >= 1) {
+        if (factor > query.value(Factor).toFloat()) {
+            query.previous();
+            i--;
+        } else
+            return i + 1;
+
     }
-    return -1;
+    return 1;
 }
 
-void RecordsModel::addNewRecord(int pos, QString name, int cols, int rows, int mines, int time, float factor)
+void RecordsModel::addNewRecord(DataRecord* record)
 {
     beginResetModel();
     QSqlQuery query;
     QString strQuery;
     bool b;
     int i = m_size;
-    qDebug() << m_size;
-    while (i >= pos) {
-        strQuery = "UPDATE records_table SET number = number + 1 WHERE number == " + QString::number(i);
+    qDebug() << record->factor;
+    while (i >= record->position) {
+        strQuery = "UPDATE records SET number = number + 1 WHERE number == " + QString::number(i);
         b = query.exec(strQuery);
         if (!b) {
             qDebug() << "updating: " << query.lastError().text();
@@ -139,27 +164,48 @@ void RecordsModel::addNewRecord(int pos, QString name, int cols, int rows, int m
         i--;
     }
 
-    strQuery = "INSERT INTO records_table (number, name, cols, rows, mines, time, factor) "
-            "VALUES (:number, :name, :cols, :rows, :mines, :time, :factor);";
+    strQuery = "INSERT INTO records (number, name, cols, rows, mines, seconds, factor) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?);";
     query.prepare(strQuery);
-    query.addBindValue(pos);
-    query.addBindValue(name);
-    query.addBindValue(cols);
-    query.addBindValue(rows);
-    query.addBindValue(mines);
-    query.addBindValue(time);
-    query.addBindValue(factor);
+    query.bindValue(Number, record->position);
+    query.bindValue(Name, record->name);
+    query.bindValue(Rows, record->numCols);
+    query.bindValue(Cols, record->numRows);
+    query.bindValue(Mines, record->numMines);
+    query.bindValue(Seconds, record->seconds);
+    query.bindValue(Factor, record->factor);
     b = query.exec();
     if (!b) {
         qDebug() << "inserting: " << query.lastError().text();
     }
 
-    b = m_query->exec("SELECT * FROM records_table");
+    refreshQuery();
+    if (m_size > MAX_SIZE) {
+        trimTable();
+    }
+
+    b = m_query->exec("SELECT * FROM records");
     if (!b) {
         qDebug() << "selecting: " << m_query->lastError().text();
     }
+    refreshQuery();
+    endResetModel();
+}
+
+
+//////////////// Private methods ////////////////
+
+void RecordsModel::trimTable()
+{
+    QSqlQuery query;
+    query.prepare("DELETE FROM records WHERE number > " + QString::number(MAX_SIZE));
+    if(!query.exec())
+        qDebug() << query.lastError().text();
+}
+
+void RecordsModel::refreshQuery()
+{
     m_query->last();
     m_size = m_query->at() + 1;
     m_query->first();
-    endResetModel();
 }

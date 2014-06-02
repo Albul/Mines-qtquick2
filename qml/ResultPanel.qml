@@ -9,7 +9,7 @@ Item {
     opacity: 0
     y: -resultPanelFrame.height
 
-    signal usernameReceived(string name)
+    signal usernameInputed(string name)
 
     Frame {
         id: resultPanelFrame
@@ -63,7 +63,7 @@ Item {
             visible: false
             onAccepted: {
                 this.focus = false;
-                gameProxy.addRecord(this.text);
+                usernameInputed(this.text);
                 this.visible = false;
             }
         }
@@ -77,8 +77,8 @@ Item {
             Button {
                 text: "Еще раз"
                 onClicked: {
-                    gameView.boardGrid.columns = gameModel.getNumCols();
-                    gameProxy.createNewGame(gameModel.getNumRows(), gameModel.getNumCols(), gameModel.getNumMines());
+                    gameView.boardGrid.columns = fieldModel.getNumCols();
+                    gameProxy.createNewGame(fieldModel.getNumRows(), fieldModel.getNumCols(), fieldModel.getNumMines());
                 }
             }
             Button {
