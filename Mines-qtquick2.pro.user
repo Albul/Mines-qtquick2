@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.0.1, 2014-05-30T15:48:52. -->
+<!-- Written by QtCreator 3.0.1, 2014-06-03T15:08:04. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
-  <value type="int">0</value>
+  <value type="int">1</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.EditorSettings</variable>
@@ -239,7 +239,7 @@
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Android для armeabi-v7a (GCC 4.8, Qt 5.2.1) </value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Android для armeabi-v7a (GCC 4.8, Qt 5.2.1) </value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{9a8bdd04-30fe-421a-ba67-aa31115d5a3c}</value>
-   <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
+   <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">1</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
@@ -302,7 +302,7 @@
     <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">true</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">E:/Sync/Source/Qt/Games/Mines-qtquick2/build-Mines-qtquick2-Android_для_armeabi_v7a_GCC_4_8_Qt_5_2_1-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">E:/Sync/Source/Qt/Games/Mines-qtquick2/build-Mines-qtquick2-Android_armeabi_v7a_GCC_4_8_Qt_5_2_1-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -372,7 +372,7 @@
      </valuemap>
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.1">
       <value type="QString" key="BuildTargetSdk">android-19</value>
-      <value type="QString" key="InputFile"></value>
+      <value type="QString" key="InputFile">E:/Sync/Source/Qt/Games/Mines-qtquick2/build-Mines-qtquick2-Android_armeabi_v7a_GCC_4_8_Qt_5_2_1-Release/android-libMines-qtquick2.so-deployment-settings.json</value>
       <value type="QString" key="KeystoreLocation"></value>
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Установка на устройство Android</value>

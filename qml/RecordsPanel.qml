@@ -12,7 +12,7 @@ Item {
     Frame {
         id: recordsPanelFrame
         width: 540 * factor
-        height: 405 * factor
+        height: 415 * factor
         anchors.centerIn: parent
 
         Text {
